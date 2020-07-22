@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components'
 import {useDrag} from "react-dnd";
+import {nanoid} from 'nanoid'
 /** utils */
 
 /** cmp */
@@ -32,7 +33,7 @@ const Element = ({
                 schema,
                 children:[]
             },
-            $id: `#/${name}_random_str`,
+            $id:`#/${name}_${nanoid(6)}`
         },
         end:(item,monitor)=>{
 
