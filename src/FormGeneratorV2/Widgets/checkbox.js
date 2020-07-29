@@ -5,15 +5,20 @@ import styled from 'styled-components'
 /** utils */
 
 /** cmp */
-
+import Checkbox from '@ubnt/ui-components/Checkbox/Checkbox'
 const Container = styled.div`
     display:flex;
 `
 
-const CheckBox = props => {
+const CheckBox = ({
+    label=''
+})=> {
     return (
         <Container>
-            <input type="checkbox"/>
+          <Checkbox
+          >
+              {label}
+          </Checkbox>
         </Container>
     );
 };

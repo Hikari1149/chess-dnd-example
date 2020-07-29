@@ -8,13 +8,22 @@ export const useFormRender = ()=>{
             settings:[]
         },
     })
-    const doSetList = (list)=>{
+    /** */
+    const {
+        list,
+        currentWidget
+    } = state
+
+    /** setter */
+    const setList = (list)=>{
         setState({
             list
         })
     }
-    const doSetCurrentWidget = (payload={})=>{
-        console.log({payload})
+    const setCurrentWidget = (payload={})=>{
+        console.log({
+            payload
+        })
         setState({
             currentWidget: {
                 ...state.currentWidget,
@@ -22,11 +31,17 @@ export const useFormRender = ()=>{
             }
         })
     }
+    const setWidgetSettings = (list)=>{
+        setCurrentWidget({settings:list})
+    }
+    /** handler */
+
     return {
         state,
         formUpdater:{
-            setList:doSetList,
-            setCurrentWidget:doSetCurrentWidget
+            setList,
+            setCurrentWidget,
+            setWidgetSettings,
         }
 
     }

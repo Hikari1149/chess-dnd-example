@@ -2,40 +2,53 @@
 
 export const BaseElements = [
     {
-        text:'Text',
+
         label:'Text', //image label
-        name:'input',
         widgetName:'input',
-        schema:{
-          title:'Text',
-          type:'string'
+        formData:{
+           label:'Name',
+           value:'',
+           placeholder:`Please Enter`
         },
         settings:[
             {
+                formDataKey:'label',
                 widgetName:'input',
                 label:'Label',
+                value:'Name'
+            },
+            {
+                formDataKey:'placeholder',
+                widgetName:'input',
+                label:'Placeholder',
+                value:'Please Enter'
             },
             {
                 widgetName:'checkbox',
-                label:'Verification'
+                title:'VERIFICATION',
+                label:'Required',
             }
-        ]
+        ],
     },
     {
-        text:'Checkbox',
         label:'Checkbox',
-        name:'checkbox',
         widgetName:'checkbox',
-        schema:{
-          title:'是否选择',
-          type:'boolean'
-        },
         settings:[
             {
                 widgetName:'input',
                 label:'Label'
             }
         ],
-
+    },
+    {
+      label:'Radio',
+      widgetName:'radio',
+      settings:[
+        {
+          widgetName:'input',
+          label:'Label'
+        }
+      ],
     }
+
 ]

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components'
 import {useDrag} from "react-dnd";
-import {nanoid} from 'nanoid'
 /** utils */
 
 /** cmp */
@@ -24,8 +23,7 @@ const Element = ({
     className='',
 }) => {
     const {
-        text,
-        name,
+      label,
     } = item
     const [{},dragRef] = useDrag({
         item:{
@@ -46,7 +44,7 @@ const Element = ({
             ref={dragRef}
             className={className}
         >
-            {text}
+            {label}
         </Container>
     );
 };

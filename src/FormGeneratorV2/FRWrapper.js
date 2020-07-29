@@ -31,23 +31,50 @@ const FRWrapper = ({
     } = state
 
 
-    const doUpdateSettings = (list)=>{
-        formUpdater.setCurrentWidget({settings:list})
+
+    const onFormItemUpdate = ({newItem,newList})=>{
+        const {formDataKey} = newItem
+        //widget setting is updated
+        console.log({newItem})
+        if(formDataKey){
+           /** update currentWidget  */
+           const newSettingItem = newItem
+           const newFormData = {
+               ...currentWidget.formData,
+               [newSettingItem.formDataKey]:newSettingItem.value
+           }
+           const newCurrentWidget = {
+               ...currentWidget,
+               settings:newList,
+               formData:newFormData
+           }
+           formUpdater.setCurrentWidget(newCurrentWidget)
+           /** update widget list */
+           const {index} = newCurrentWidget
+           const newWidgetList = [...list]
+            newWidgetList [index] = newCurrentWidget
+           formUpdater.setList(newWidgetList)
+        }
+
+
     }
-    console.log({state})
+
+    console.log({list,currentWidget})
     return (
             <Container>
                 <Elements/>
                 <FormRender
                     list={list}
                     setList={formUpdater.setList}
+                    selectedIndex={currentWidget.index}
                     handleFormItemClick={formUpdater.setCurrentWidget}
                 />
                 <WidgetConfigWrapper>
                     <FormRender
                         list={currentWidget.settings}
-                        setList={doUpdateSettings}
+                        setList={formUpdater.setWidgetSettings}
                         isPreview={true}
+                        handleFormItemUpdate={onFormItemUpdate}
                     />
                 </WidgetConfigWrapper>
             </Container>

@@ -21,8 +21,11 @@ const FormRender = ({
     isPreview = false,//can change order
     list=[],
     setList,
-    handleFormItemClick,
+    handleFormItemClick=()=>{},
+    handleFormItemUpdate=()=>{},
+    selectedIndex=-1,
 }) => {
+    /** form dnd handle */
     const {
         doAddItem,
         doMoveItem,
@@ -42,6 +45,13 @@ const FormRender = ({
             doMoveItem({destinationIndex:list.length,dragIndex:item.index})
         }
     }
+    /** form data handle */
+    const onUpdateItem = ({newItem,index})=>{
+        let newList = [...list]
+        newList[index] = newItem
+        setList(newList)
+        handleFormItemUpdate({newItem,newList}) // form data联动.
+    }
 
     return (
         <Container>
@@ -59,6 +69,7 @@ const FormRender = ({
                                         <DndItemWrapper
                                             canDrag={!isPreview}
                                             canDrop={!isPreview}
+                                           // isSelected={i===selectedIndex&&!isPreview}
                                             handleAddItem={doAddItem}
                                             handleMoveItem={doMoveItem}
                                             key={i}
@@ -66,8 +77,10 @@ const FormRender = ({
                                             renderItem={()=>{
                                                 return (
                                                     <FormItem
+                                                        index={i}
                                                         item={item}
-                                                        handleClick={()=>handleFormItemClick(item)}
+                                                        handleClick={handleFormItemClick}
+                                                        handleUpdateItem={onUpdateItem}
                                                     />
                                                 )
                                             }}
