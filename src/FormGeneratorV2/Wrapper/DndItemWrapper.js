@@ -1,4 +1,4 @@
-import React,{useRef} from 'react';
+import React,{useRef,useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components'
 import {useDrag, useDrop} from "react-dnd";
@@ -21,17 +21,21 @@ const Container = styled.div`
     padding-bottom: 15px; //increase drop area
     overflow-x: hidden;
 `
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div.attrs(props=>({
+    className:props.isPicked?'picked':''
+}))`
     width: 100%;
     box-sizing: border-box;
     &:hover{
       border: 1px dashed #006fff;
     }
-    &:focus{
+    &.picked{
       border: 1px solid #006fff;
-      outline: none;
     }
     border: 1px solid transparent;
+    
+    outline: none;
+    //border: 1px solid transparent;
     background: ${props=>
     //props.isOver?'#0ff':'#fff'
     (props.isDragging && '#000')
@@ -44,18 +48,21 @@ const ContentWrapper = styled.div`
 `
 
 const DndItemWrapper = ({
-    formItem={},
+    item={},
     index=0,
-    isSelected,
+    isPicked,
     handleMoveItem,
     handleAddItem,
+    handleContentClick=()=>{},
     renderItem,
     canDrag=true,
     canDrop=true
 }) => {
     const {
         label,
-    } = formItem
+        $id,
+    } = item
+
     const contentRef = useRef('')
     const [{isDragging},drag] = useDrag({
         item:{
@@ -63,9 +70,15 @@ const DndItemWrapper = ({
             label,
             index,
         },
+        begin:(monitor)=>{
+            /** trigger click content */
+            handleContentClick({item})
+
+        },
         collect:(monitor)=>({
             isDragging:monitor.isDragging()
         }),
+
     })
     const [{isOver},drop] = useDrop({
         accept:canDrop?['box','element']:[],
@@ -85,7 +98,9 @@ const DndItemWrapper = ({
             }
         },
     })
-
+    const onContentClick = ()=>{
+        handleContentClick({item})
+    }
     return (
         <Container ref={drop}>
             {isOver && <MarkLine/>}
@@ -94,7 +109,9 @@ const DndItemWrapper = ({
                 tabIndex={1}
                 canDrag={canDrag}
                 isDragging={isDragging}
-                isSelected={isSelected}
+                isPicked={isPicked}
+                onClick={onContentClick}
+
 
             >
                 {renderItem()}

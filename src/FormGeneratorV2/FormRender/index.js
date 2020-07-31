@@ -23,18 +23,17 @@ const FormRender = ({
     setList,
     handleFormItemClick=()=>{},
     handleFormItemUpdate=()=>{},
-    selectedIndex=-1,
 }) => {
     /** form dnd handle */
     const {
-        doAddItem,
-        doMoveItem,
+        pickedDndItemId,
+        dndListUpdater
     } = useDndList({list,setList})
     const listRef = useRef({})
     const onDropItemInList = ({item})=>{
         //from left side
         if(item.isElement) {
-            doAddItem({
+            dndListUpdater.doAddItem({
                 destinationIndex: list.length,
                 item:{
                 ...item,
@@ -42,7 +41,7 @@ const FormRender = ({
                 }
             })
         }else{
-            doMoveItem({destinationIndex:list.length,dragIndex:item.index})
+            dndListUpdater.doMoveItem({destinationIndex:list.length,dragIndex:item.index})
         }
     }
     /** form data handle */
@@ -52,7 +51,10 @@ const FormRender = ({
         setList(newList)
         handleFormItemUpdate({newItem,newList}) // form data联动.
     }
-
+    console.log({
+        list,
+        pickedDndItemId
+    })
     return (
         <Container>
             <DropListWrapper
@@ -67,11 +69,13 @@ const FormRender = ({
                                 list.map((item,i)=>{
                                     return (
                                         <DndItemWrapper
+                                            item={item}
                                             canDrag={!isPreview}
                                             canDrop={!isPreview}
-                                           // isSelected={i===selectedIndex&&!isPreview}
-                                            handleAddItem={doAddItem}
-                                            handleMoveItem={doMoveItem}
+                                            isPicked={pickedDndItemId===item.$id}
+                                            handleAddItem={dndListUpdater.doAddItem}
+                                            handleMoveItem={dndListUpdater.doMoveItem}
+                                            handleContentClick={dndListUpdater.doDndItemClick}
                                             key={i}
                                             index={i}
                                             renderItem={()=>{

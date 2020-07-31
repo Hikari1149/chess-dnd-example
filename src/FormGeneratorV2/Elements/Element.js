@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components'
 import {useDrag} from "react-dnd";
+import {nanoid} from 'nanoid'
 /** utils */
 
 /** cmp */
@@ -27,6 +28,7 @@ const Element = ({
     } = item
     const [{},dragRef] = useDrag({
         item:{
+            $id:`${label}_${nanoid(6)}`,
             type:'element',
             mode:'add',
             isElement:true,

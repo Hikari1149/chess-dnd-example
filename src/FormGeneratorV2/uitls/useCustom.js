@@ -49,7 +49,16 @@ export const useFormRender = ()=>{
 
 
 export const useDndList = ({list,setList})=>{
+    const [state,setState] = useSet({
+        pickedItemId:-1,
+    })
+    const {pickedItemId} = state
+    /** setter */
 
+
+
+
+    /** dnd handler */
     const doAddItem = ({destinationIndex,item})=>{
         const newList = [...list]
         newList.splice(destinationIndex,0,{
@@ -68,9 +77,19 @@ export const useDndList = ({list,setList})=>{
         newList.splice(destinationIndex,0,dragWidget)
         setList(newList)
     }
+    const doDndItemClick = ({item})=>{
+        console.log({item})
+        setState({
+            pickedItemId:item.$id
+        })
+    }
     return {
-        doAddItem,
-        doMoveItem
+        pickedDndItemId:pickedItemId,
+        dndListUpdater: {
+            doAddItem,
+            doMoveItem,
+            doDndItemClick
+        }
     }
 
 }

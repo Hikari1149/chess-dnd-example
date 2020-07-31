@@ -22,20 +22,19 @@ const WidgetConfigWrapper = styled.div`
 const FRWrapper = ({
 }) => {
     const {
-        state,
+        state:{
+            list,
+            currentWidget={},
+        },
         formUpdater,
     } = useFormRender()
-    const {
-        list,
-        currentWidget={}
-    } = state
+
 
 
 
     const onFormItemUpdate = ({newItem,newList})=>{
         const {formDataKey} = newItem
         //widget setting is updated
-        console.log({newItem})
         if(formDataKey){
            /** update currentWidget  */
            const newSettingItem = newItem
@@ -66,7 +65,6 @@ const FRWrapper = ({
                 <FormRender
                     list={list}
                     setList={formUpdater.setList}
-                    selectedIndex={currentWidget.index}
                     handleFormItemClick={formUpdater.setCurrentWidget}
                 />
                 <WidgetConfigWrapper>
