@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import {BaseElements} from "./utils/elementList";
 
 /** cmp */
+import Accordion from '@ubnt/ui-components/Accordion/Accordion'
 import Element from './Element'
 
 const Container = styled.div.attrs({

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components'
+import {nanoid} from "nanoid";
 
 /** utils */
 
@@ -11,11 +12,20 @@ const Container = styled.div`
 `
 
 const CheckBox = ({
-    label=''
+    label='',
+    value,
+    handleChange
 })=> {
+    const onChange = (e)=>{
+       handleChange(e.target.checked)
+    }
     return (
         <Container>
           <Checkbox
+              checked={value}
+              value={value}
+              onChange={onChange}
+              id={`ui-checkbox-${nanoid(6)}`}
           >
               {label}
           </Checkbox>

@@ -20,59 +20,53 @@ const Container = styled.div`
 const FormRender = ({
     isPreview = false,//can change order
     list=[],
+    pickedItemId,
     setList,
-    handleFormItemClick=()=>{},
-    handleFormItemUpdate=()=>{},
+    setPickedId=()=>{},
+    handleAddItem,
+    handleUpdateItem
 }) => {
     /** form dnd handle */
     const {
-        pickedDndItemId,
         dndListUpdater
-    } = useDndList({list,setList})
+    } = useDndList({list,setList,setPickedId,handleAddItem})
     const listRef = useRef({})
-    const onDropItemInList = ({item})=>{
-        //from left side
-        if(item.isElement) {
-            dndListUpdater.doAddItem({
-                destinationIndex: list.length,
-                item:{
-                ...item,
-                    isElement:false,
-                }
-            })
-        }else{
-            dndListUpdater.doMoveItem({destinationIndex:list.length,dragIndex:item.index})
-        }
-    }
     /** form data handle */
     const onUpdateItem = ({newItem,index})=>{
         let newList = [...list]
         newList[index] = newItem
         setList(newList)
-        handleFormItemUpdate({newItem,newList}) // form data联动.
+        handleUpdateItem && handleUpdateItem({newItem,index,newList}) // customize updateItem
     }
-    console.log({
-        list,
-        pickedDndItemId
-    })
+    const onClickFormItem = ({item})=>{
+        setPickedId(item.$id)
+    }
+
+    if(!isPreview) {
+        console.log({
+            list,
+            pickedItemId
+        })
+    }
     return (
         <Container>
             <DropListWrapper
                 canDrop={!isPreview}
                 list={list}
                 listRef={listRef}
-                handleDrop={onDropItemInList}
+                handleDrop={dndListUpdater.doDropItemInList}
                 renderList={()=>{
                     return (
                         <div ref={listRef}>
                             {
                                 list.map((item,i)=>{
+                                    const isPicked = pickedItemId===item.$id  && !isPreview
                                     return (
                                         <DndItemWrapper
                                             item={item}
                                             canDrag={!isPreview}
                                             canDrop={!isPreview}
-                                            isPicked={pickedDndItemId===item.$id}
+                                            isPicked={isPicked}
                                             handleAddItem={dndListUpdater.doAddItem}
                                             handleMoveItem={dndListUpdater.doMoveItem}
                                             handleContentClick={dndListUpdater.doDndItemClick}
@@ -83,8 +77,8 @@ const FormRender = ({
                                                     <FormItem
                                                         index={i}
                                                         item={item}
-                                                        handleClick={handleFormItemClick}
                                                         handleUpdateItem={onUpdateItem}
+                                                        handleClick={onClickFormItem}
                                                     />
                                                 )
                                             }}

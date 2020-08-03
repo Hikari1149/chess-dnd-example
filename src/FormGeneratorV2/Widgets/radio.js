@@ -10,10 +10,18 @@ const Container = styled.div`
     display:flex;
 `;
 
-const Radio = props => {
+const Radio = ({
+    value='',
+    handleChange
+}) => {
+  const onChange = (e)=>{
+      handleChange(e.target.checked)
+  }
   return (
     <Container>
       <UIRadio
+          checked={value}
+          onChange={onChange}
       />
     </Container>
   );

@@ -2,12 +2,13 @@ import React from 'react';
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
 import Elements from "./Elements";
+import lodashGet from 'lodash/get'
 import FormRender from "./FormRender";
 
 import {combineSchema, dataToFlatten, flattenSchema,idToSchema} from "./uitls";
 import {InnerCtx} from "./uitls/context";
 import {useSet} from "./uitls/hooks";
-import {useFormRender} from "./uitls/useCustom";
+import {useFormGenerator} from "./uitls/useCustom";
 
 const Container = styled.div`
   display: flex;
@@ -22,59 +23,55 @@ const WidgetConfigWrapper = styled.div`
 const FRWrapper = ({
 }) => {
     const {
-        state:{
-            list,
-            currentWidget={},
-        },
+        list,
+        settingsObj,
+        pickedItemId,
+        pickedSettings,
         formUpdater,
-    } = useFormRender()
+    } = useFormGenerator()
 
 
+    console.log({
+        settingsObj,
+        pickedItemId,
+        pickedSettings
+    })
 
+    const onSave = ()=>{
+       let formList = list.map(d=>{
+           const settings = settingsObj[d.$id]
+           return {
+               ...d,
+               settings,
 
-    const onFormItemUpdate = ({newItem,newList})=>{
-        const {formDataKey} = newItem
-        //widget setting is updated
-        if(formDataKey){
-           /** update currentWidget  */
-           const newSettingItem = newItem
-           const newFormData = {
-               ...currentWidget.formData,
-               [newSettingItem.formDataKey]:newSettingItem.value
            }
-           const newCurrentWidget = {
-               ...currentWidget,
-               settings:newList,
-               formData:newFormData
-           }
-           formUpdater.setCurrentWidget(newCurrentWidget)
-           /** update widget list */
-           const {index} = newCurrentWidget
-           const newWidgetList = [...list]
-            newWidgetList [index] = newCurrentWidget
-           formUpdater.setList(newWidgetList)
-        }
-
-
+       })
+       alert(JSON.stringify(formList))
+        console.log({
+            formList
+        })
     }
-
-    console.log({list,currentWidget})
     return (
             <Container>
                 <Elements/>
                 <FormRender
                     list={list}
+                    pickedItemId={pickedItemId}
                     setList={formUpdater.setList}
-                    handleFormItemClick={formUpdater.setCurrentWidget}
+                    setPickedId={formUpdater.setPickedItemId}
+                    handleAddItem={formUpdater.onAddFormItem}
                 />
                 <WidgetConfigWrapper>
                     <FormRender
-                        list={currentWidget.settings}
-                        setList={formUpdater.setWidgetSettings}
+                        list={pickedSettings}
+                        setList={()=>{}}
                         isPreview={true}
-                        handleFormItemUpdate={onFormItemUpdate}
+                        handleUpdateItem={formUpdater.onUpdateFormItem}
                     />
                 </WidgetConfigWrapper>
+
+                <button onClick={onSave}>Save</button>
+
             </Container>
     );
 };

@@ -1,4 +1,13 @@
 
+const commonSettings = [
+    {
+        id:'required',
+        widgetName:'checkbox',
+        title:'VERIFICATION',
+        label:'Required',
+    }
+
+]
 
 export const BaseElements = [
     {
@@ -10,30 +19,29 @@ export const BaseElements = [
            value:'',
            placeholder:`Please Enter`
         },
-        settings:[
+        defaultSettings:[
             {
-                formDataKey:'label',
+                $formKey:'label',
                 widgetName:'input',
                 label:'Label',
                 value:'Name'
             },
             {
-                formDataKey:'placeholder',
+                $formKey:'placeholder',
                 widgetName:'input',
                 label:'Placeholder',
                 value:'Please Enter'
             },
-            {
-                widgetName:'checkbox',
-                title:'VERIFICATION',
-                label:'Required',
-            }
         ],
     },
     {
         label:'Checkbox',
         widgetName:'checkbox',
-        settings:[
+        formData:{
+
+          value:false,
+        },
+        defaultSettings:[
             {
                 widgetName:'input',
                 label:'Label'
@@ -43,12 +51,17 @@ export const BaseElements = [
     {
       label:'Radio',
       widgetName:'radio',
-      settings:[
+      defaultSettings:[
         {
           widgetName:'input',
           label:'Label'
         }
       ],
     }
-
-]
+].map(d=>({
+    ...d,
+    defaultSettings:[
+        ...d.defaultSettings,
+        ...commonSettings,
+    ]
+}))

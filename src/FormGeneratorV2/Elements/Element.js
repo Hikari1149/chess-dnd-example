@@ -30,7 +30,6 @@ const Element = ({
         item:{
             $id:`${label}_${nanoid(6)}`,
             type:'element',
-            mode:'add',
             isElement:true,
             ...item,
         },

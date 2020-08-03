@@ -23,6 +23,11 @@ const Input = ({
     return (
         <Container>
             <UIInput
+              draggable={true}
+              onDragStart={(e)=>{
+                  e.preventDefault()
+                  e.stopPropagation()
+              }}
               label={label}
               value={value}
               placeholder={placeholder}

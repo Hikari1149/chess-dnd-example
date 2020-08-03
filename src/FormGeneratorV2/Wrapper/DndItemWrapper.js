@@ -21,13 +21,15 @@ const Container = styled.div`
     padding-bottom: 15px; //increase drop area
     overflow-x: hidden;
 `
-const ContentWrapper = styled.div.attrs(props=>({
-    className:props.isPicked?'picked':''
-}))`
+const ContentWrapper = styled.div.attrs(props=>{
+    return {
+        className: props.isPicked ? 'picked' : ''
+    }
+})`
     width: 100%;
     box-sizing: border-box;
     &:hover{
-      border: 1px dashed #006fff;
+      border: 1px dashed ${props=>props.canDrag?'#006fff':'transparent'};
     }
     &.picked{
       border: 1px solid #006fff;
@@ -73,7 +75,6 @@ const DndItemWrapper = ({
         begin:(monitor)=>{
             /** trigger click content */
             handleContentClick({item})
-
         },
         collect:(monitor)=>({
             isDragging:monitor.isDragging()
@@ -99,7 +100,7 @@ const DndItemWrapper = ({
         },
     })
     const onContentClick = ()=>{
-        handleContentClick({item})
+        //handleContentClick({item})
     }
     return (
         <Container ref={drop}>

@@ -21,8 +21,8 @@ const Container = styled.div`
 const FormItem = ({
     index,
     item={},
-    handleClick,
-    handleUpdateItem,
+    handleClick=()=>{},
+    handleUpdateItem=()=>{},
 })=> {
     const {
         widgetName,
@@ -45,8 +45,7 @@ const FormItem = ({
        })
     }
     const onItemClick = ()=>{
-        console.log({index})
-        handleClick({...item,index})
+        handleClick({item})
     }
 
     return (

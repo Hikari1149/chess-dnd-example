@@ -1,71 +1,105 @@
+import {useState,useMemo} from 'react'
 import {useSet} from "./hooks";
 
 
-export const useFormRender = ()=>{
-    const [state,setState] = useSet({
-        list:[],
-        currentWidget:{
-            settings:[]
-        },
-    })
-    /** */
-    const {
-        list,
-        currentWidget
-    } = state
+export const useFormGenerator = ()=>{
+    const [list,setList] = useState([]) // current form list
+    const [settingsObj,setSettingsObj] = useState({})
+    const [pickedItemId,setPickedItemId] = useState(-1)
 
-    /** setter */
-    const setList = (list)=>{
-        setState({
-            list
-        })
-    }
-    const setCurrentWidget = (payload={})=>{
-        console.log({
-            payload
-        })
-        setState({
-            currentWidget: {
-                ...state.currentWidget,
-                ...payload
-            }
-        })
-    }
-    const setWidgetSettings = (list)=>{
-        setCurrentWidget({settings:list})
-    }
     /** handler */
+    const onAddFormItem = ({item,destinationIndex})=>{
+        /** update formList */
+        const newList = [...list]
+        const {formData={}} = item
+        newList.splice(destinationIndex,0,{
+            $id:item.$id,
+            widgetName:item.widgetName,
+            defaultSettings:item.defaultSettings,
+            ...formData,
+            index:destinationIndex,
+        })
 
+        /** update settingsObj */
+        let newSettingsObj = {...settingsObj}
+        newSettingsObj[item.$id] = item.defaultSettings
+        /** */
+        setPickedItemId(item.$id)
+        setList(newList)
+        setSettingsObj(newSettingsObj)
+    }
+
+    const onUpdateFormItem = ({newItem,index,newList})=>{
+        let {$formKey} = newItem
+        if($formKey){
+            /** update co-respond formItem Data */
+            let newFormList = [...list]
+            let itemIndex = list.findIndex(d=>d.$id === pickedItemId)
+            newFormList [itemIndex] = {
+                ...list[itemIndex],
+                [$formKey]:newItem.value
+            }
+            /** */
+            setList(newFormList)
+        }
+        /**  update settingsObj */
+        let newSettingsObj = {...settingsObj}
+        let settings = newList
+        newSettingsObj[pickedItemId] = settings
+        setSettingsObj(newSettingsObj)
+    }
+
+    /** variants */
+
+
+    const pickedSettings = useMemo(()=>{
+        return settingsObj[pickedItemId]
+    },[pickedItemId,settingsObj])
     return {
-        state,
+        list,
+        settingsObj,
+        pickedItemId,
+        pickedSettings,
         formUpdater:{
             setList,
-            setCurrentWidget,
-            setWidgetSettings,
+            onUpdateFormItem,
+            onAddFormItem,
+            setPickedItemId,
         }
 
     }
 }
 
-
-export const useDndList = ({list,setList})=>{
-    const [state,setState] = useSet({
-        pickedItemId:-1,
-    })
-    const {pickedItemId} = state
+/**
+ *
+ * @param list   *isRequired
+ * @param setList *isRequired
+ * @param setPickedId *isRequired
+ * @param handleAddItem
+ * @returns {{pickedDndItemId: number, dndListUpdater: {doAddItem: doAddItem, doMoveItem: doMoveItem, doDropItemInList: doDropItemInList, doDndItemClick: doDndItemClick}}}
+ */
+export const useDndList = ({
+    list,
+    setList,
+    setPickedId=()=>{},
+    handleAddItem,
+})=>{
+    const [pickedItemId,setPickedItemItemId] = useState(-1)
     /** setter */
-
-
 
 
     /** dnd handler */
     const doAddItem = ({destinationIndex,item})=>{
         const newList = [...list]
-        newList.splice(destinationIndex,0,{
-            ...item,
-            index:destinationIndex,
-        })
-        setList(newList)
+        if(handleAddItem){
+            handleAddItem({destinationIndex,item})  //customize add item
+        }else {
+            newList.splice(destinationIndex, 0, {
+                ...item,
+                index: destinationIndex,
+            })
+            setList(newList)
+        }
     }
     const doMoveItem = ({dragIndex,destinationIndex})=>{
         if(destinationIndex<0){
@@ -77,18 +111,32 @@ export const useDndList = ({list,setList})=>{
         newList.splice(destinationIndex,0,dragWidget)
         setList(newList)
     }
-    const doDndItemClick = ({item})=>{
-        console.log({item})
-        setState({
-            pickedItemId:item.$id
-        })
+    const doDndItemClick = ({item={}})=>{
+        setPickedItemItemId(item.$id)
+        setPickedId(item.$id) //
     }
+    const doDropItemInList = ({item={}})=>{
+        /** from left side */
+        if(item.isElement) {
+            doAddItem({
+                destinationIndex: list.length,
+                item:{
+                    ...item,
+                    isElement:false,
+                }
+            })
+        }else{
+            doMoveItem({destinationIndex:list.length,dragIndex:item.index})
+        }
+    }
+
     return {
         pickedDndItemId:pickedItemId,
         dndListUpdater: {
             doAddItem,
             doMoveItem,
-            doDndItemClick
+            doDndItemClick,
+            doDropItemInList,
         }
     }
 
